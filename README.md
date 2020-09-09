@@ -8,8 +8,14 @@ Hopfield networks with hashing in two versions:
 ## Dependencies:
 The scripts are written for Python 3.7.
 
+* jupyter notebook: `pip install jupyterlab` [https://jupyter.org/install]
 * numpy: `pip install numpy` [https://numpy.org/install/]
 * python_speech_features: `pip install python_speech_features` [https://github.com/jameslyons/python_speech_features]
 * scipy: `pip install scipy` [https://scipy.org/install.html]
 * matplotlib: `pip install matplotlib`[https://matplotlib.org/3.2.1/users/installing.html]
 * glob: `pip install glob3`
+
+
+## Note:
+
+Move the `.wav` files you wish to use with these scripts into *./wavs* folder or modify the path in `folder_train = "./wavs/"`.
