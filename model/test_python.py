@@ -1,11 +1,13 @@
 from __future__ import print_function
-
+import sys
+import pickle
+import timeit
 import numpy as np
 import random
 import pandas as pd
 from hash import *
 from init_net import *
-from _retrieve_memory import *
+from retrieve_memory import *
 
 def precision_recall(T, V_train, V_test, N, U):
     """
@@ -87,6 +89,7 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
     for p in p_list:
         if mfccs_vectors == None:
             V = []
+            np.random.seed(27)
             for n in range(0,100):
                 rndm_vect = np.random.binomial(1, p, size=N)
                 V.append(rndm_vect)
@@ -160,3 +163,25 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
 
     results = pd.DataFrame(results)   
     return(results)
+
+
+MTD = sys.argv[1]
+
+
+U = 0
+N = 10
+g = 100
+p_list = [0.1]
+n_list = [5]
+
+start = timeit.default_timer()
+
+
+results_PR_artif = test_memory(METHOD = MTD, TEST = "errors", U = U, N = N, g = g, p_list = p_list, n_list = n_list)
+
+stop = timeit.default_timer()
+
+print('Time: ', stop - start)  
+
+# print(results_PR_hash)
+# print(results_PR_artif)

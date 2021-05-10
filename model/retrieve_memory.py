@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 
-def retrieve_memory(T, V0, U=0, downstate=0, full_trace=True, SEED=27, check_frequency=1):
+def retrieve_memory(T, V0, U=0, downstate=0, full_trace=False, SEED=27, check_frequency=1):
     """
     Eq. (1) from [1]
     
