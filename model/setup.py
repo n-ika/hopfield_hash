@@ -5,6 +5,6 @@ import numpy
 
 setup(
   name='Test',
-  ext_modules=[Extension('_retrieve_memory', ['retrieve_memory_cy.pyx'],)],
+  ext_modules=[Extension('_retrieve_memory', ['_retrieve_memory.pyx'],)],
   cmdclass={'build_ext': build_ext},include_dirs=[numpy.get_include()]
 )
