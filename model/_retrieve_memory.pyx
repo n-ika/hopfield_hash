@@ -12,7 +12,7 @@ ctypedef cnp.float64_t CTYPE_float
 
 def make_table(N, SEED=27):
     np.random.seed(SEED)
-    return np.random.randint(0,N,size=(100000,))
+    return np.random.randint(0,N,size=(1000000,))
 
 def retrieve_memory(T, V0, U=0.0, SEED=27, check_frequency=1):
     random.seed(SEED)
