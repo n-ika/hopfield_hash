@@ -10,8 +10,9 @@ ctypedef cnp.int_t CTYPE_S # neuron activation
 ctypedef cnp.int_t CTYPE_int
 ctypedef cnp.float64_t CTYPE_float
 
-def make_table(N):
-    return np.random.randint(0,N,size=(10000,))
+def make_table(N, SEED=27):
+    np.random.seed(SEED)
+    return np.random.randint(0,N,size=(100000,))
 
 def retrieve_memory(T, V0, U=0.0, SEED=27, check_frequency=1):
     random.seed(SEED)
@@ -32,9 +33,13 @@ cdef _retrieve_memory(CTYPE_I N, CTYPE_W[:,:] T, CTYPE_S[:] V, CTYPE_A U, CTYPE_
             i =  random_table[k,] #(rand()*N)/RAND_MAX # random integer 0,...,N-1
             V[i] = _update_neuron(N, T, U, V, i)
             k += 1
-            if k > random_table.shape[0]:
+            if k >= random_table.shape[0]:
+                print("Re-making table, k=",k)
                 _retrieve_memory(N, T, V, U, conv_check_spacing)
                 # reprovision table and reset correct running context
+    
+    with open(str(N)+"_k.txt", "a+") as file_object:
+        file_object.write(str(k) + "\n")
     return V
 
 

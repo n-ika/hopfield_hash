@@ -34,7 +34,7 @@ def retrieve_memory(T, V0, U=0, downstate=0, full_trace=False, SEED=27, check_fr
     a numpy array of shape (1, N)
         We return the new / denoised V
     """
-    random.seed(SEED)
+    np.random.seed(SEED)
     conv_check_spacing = len(V0)*check_frequency 
     
     V = V0.copy()
