@@ -169,10 +169,10 @@ MTD = sys.argv[1]
 
 
 U = 0
-N = 10
+N = 1000
 g = 100
-p_list = [0.1]
-n_list = [5]
+p_list = [0.01,0.1,0.5]
+n_list = [50,100,150]
 
 start = timeit.default_timer()
 

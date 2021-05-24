@@ -87,7 +87,7 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
     for p in p_list:
         if mfccs_vectors == None:
             V = []
-            for n in range(0,100):
+            for n in range(0,10000):
                 rndm_vect = np.random.binomial(1, p, size=N)
                 V.append(rndm_vect)
 
@@ -102,7 +102,8 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
         for n in n_list:
             
             V_train = V[:n]
-            V_test = V[:n+n]
+            # V_test = V[n+1:n+n]
+            V_test = V[:n]
             
             if METHOD == "default":
                 T_I = initialize_network(N, 0.5, V_train) # no inhibition
@@ -128,8 +129,8 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
             # Check how many values of each state has changed
             for (i, memory_state) in enumerate(V_test):
                 retrieved_state = retrieve_memory(T_I, memory_state, U=U_eff)
-                print("Memory state: ", memory_state)
-                print("Retrieved state: ", retrieved_state)
+                # print("Memory state: ", memory_state)
+                # print("Retrieved state: ", retrieved_state)
                 
                 if TEST == "errors":
                     counts = count_errors(memory_state, retrieved_state)

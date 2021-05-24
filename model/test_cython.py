@@ -90,7 +90,7 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
         if mfccs_vectors == None:
             V = []
             np.random.seed(27)
-            for n in range(0,100):
+            for i in range(0,10000):
                 rndm_vect = np.random.binomial(1, p, size=N)
                 V.append(rndm_vect)
 
@@ -169,15 +169,16 @@ MTD = sys.argv[1]
 
 
 U = 0
-N = 10
+N = 1000
 g = 100
-p_list = [0.1]
-n_list = [5]
+p_list = [0.01]
+n_list = [100]
 
 start = timeit.default_timer()
 
 
-results_PR_artif = test_memory(METHOD = MTD, TEST = "errors", U = U, N = N, g = g, p_list = p_list, n_list = n_list)
+results_PR_artif = test_memory(METHOD = MTD, TEST = "PR", U = U, N = N, g = g, p_list = p_list, n_list = n_list)
+
 
 stop = timeit.default_timer()
 
