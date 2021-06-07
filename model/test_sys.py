@@ -29,11 +29,13 @@ def precision_recall(T, V_train, V_test, N, U):
         We return values of hits, false alarms, correct rejections, misses
     """
     
+    K = []
     correct_rejection = 0
     false_alarm = 0
     default = np.zeros(N)
     for v in V_test:
-        memory = retrieve_memory(T, v, U=np.float(U))
+        memory, k = retrieve_memory(T, v, U=np.float(U))
+        K.append(k)
         if np.array_equal(memory, default):
             correct_rejection += 1
         else:
@@ -45,7 +47,8 @@ def precision_recall(T, V_train, V_test, N, U):
     miss = 0
     default = np.zeros(N)
     for v in V_train:
-        memory = retrieve_memory(T, v, U=np.float(U))
+        memory, k = retrieve_memory(T, v, U=np.float(U))
+        K.append(k)
         if np.array_equal(memory, default):
             miss += 1
         else:
@@ -53,8 +56,8 @@ def precision_recall(T, V_train, V_test, N, U):
     hits = hits/len(V_train)
     miss = miss/len(V_train)
     
-    
-    return hits, false_alarm, correct_rejection, miss
+    return hits, false_alarm, correct_rejection, miss, K
+
 
 
 def count_errors(initial_state, retrieved_state):
@@ -73,16 +76,16 @@ def calculate_distance(initial_state, retrieved_state, N, decision):
         familiarity = 0
     return(familiarity)
 
-def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_list = [0.01, 0.1, 0.5], n_list = [5, 10, 15], SEED = 27):
+def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_list = [0.01, 0.1, 0.5], SEED = 27):
 
-    # DOWNSTATE = 0
+    n_list = [1, 2, int(N*0.05), int(N*0.1), int(N*0.15), int(N*0.5), N, N*2]
     
     if TEST == "errors":
-        results = {"threshold":[], "N":[], "n":[], "errors":[], "p":[]}
+        results = {"threshold":[], "N":[], "n":[], "errors":[], "p":[], "k":[], "type":[]}
     if TEST == "PR":
-        results = {"threshold":[], "N":[], "n":[], "TPR":[], "FPR":[], "p":[]}
+        results = {"threshold":[], "N":[], "n":[], "TPR":[], "FPR":[], "p":[], "k":[]}
     if TEST == "distance":
-        results = {"threshold":[], "N":[], "n":[], "familiarity":[], "p":[]}
+        results = {"threshold":[], "N":[], "n":[], "familiarity":[], "p":[], "k":[], "type":[]}
         
     for p in p_list:
         if mfccs_vectors == None:
@@ -102,8 +105,7 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
         for n in n_list:
             
             V_train = V[:n]
-            # V_test = V[n+1:n+n]
-            V_test = V[:n]
+            V_test = V[n+1:n+n]
             
             if METHOD == "default":
                 T_I = initialize_network(N, 0.5, V_train) # no inhibition
@@ -127,37 +129,53 @@ def test_memory(METHOD, TEST, mfccs_vectors=None, U = 0, N = 100, g = 100, p_lis
 
             # Test the system with the same vectors that are stored in memory
             # Check how many values of each state has changed
-            for (i, memory_state) in enumerate(V_test):
-                retrieved_state = retrieve_memory(T_I, memory_state, U=U_eff)
-                # print("Memory state: ", memory_state)
-                # print("Retrieved state: ", retrieved_state)
-                
-                if TEST == "errors":
-                    counts = count_errors(memory_state, retrieved_state)
-                    results["errors"].append(counts)
-                
-                elif TEST == "PR":
-                    hit, fa, corr_rej, miss = precision_recall(T_I, V_train, V_test, N, U_eff)
-                    if hit + miss == 0:
-                        TPR = np.NaN
-                    else:
-                        TPR = hit / (hit + miss)
-                    if fa + corr_rej == 0:
-                        FPR = np.NaN
-                    else:
-                        FPR = fa / (fa + corr_rej)
-                    results["TPR"].append(TPR)
-                    results["FPR"].append(FPR)
-                
-                elif TEST == "distance":
-                    dec_val = 100-p
-                    dist = calculate_distance(memory_state, retrieved_state, N, dec_val)
-                    results["familiarity"].append(dist)
-                    
-                results["threshold"].append(U_eff)
-                results["N"].append(N)
-                results["n"].append(n)
-                results["p"].append(p)
+            if TEST == "PR":
+                hit, fa, corr_rej, miss, K = precision_recall(T_I, V_train, V_test, N, U_eff)
+                if hit + miss == 0:
+                    TPR = np.NaN
+                else:
+                    TPR = hit / (hit + miss)
+                if fa + corr_rej == 0:
+                    FPR = np.NaN
+                else:
+                    FPR = fa / (fa + corr_rej)
+                results["k"].append(K)
+                results["TPR"].append(TPR)
+                results["FPR"].append(FPR)
 
-    results = pd.DataFrame(results)   
+            if TEST == "errors" or TEST == "distance":
+
+                for (i, memory_state) in enumerate(V_train):
+                    retrieved_state, k = retrieve_memory(T_I, memory_state, U=U_eff)
+                    results["k"].append(k)
+                    if TEST == "errors":
+                        counts = count_errors(memory_state, retrieved_state)
+                        results["errors"].append(counts)
+                    elif TEST == "distance":
+                        dec_val = 100-p
+                        dist = calculate_distance(memory_state, retrieved_state, N, dec_val)
+                        results["familiarity"].append(dist)
+                    results["type"].append("known")
+                    results["threshold"].append(U_eff)
+                    results["N"].append(N)
+                    results["n"].append(n)
+                    results["p"].append(p)
+
+                for (i, memory_state) in enumerate(V_test):
+                    retrieved_state, k = retrieve_memory(T_I, memory_state, U=U_eff)
+                    results["k"].append(k)
+                    if TEST == "errors":
+                        counts = count_errors(memory_state, retrieved_state)
+                        results["errors"].append(counts)
+                    elif TEST == "distance":
+                        dec_val = 100-p
+                        dist = calculate_distance(memory_state, retrieved_state, N, dec_val)
+                        results["familiarity"].append(dist)
+                    results["type"].append("new")
+                    results["threshold"].append(U_eff)
+                    results["N"].append(N)
+                    results["n"].append(n)
+                    results["p"].append(p)
+
+    results = pd.DataFrame.from_dict(results)   
     return(results)

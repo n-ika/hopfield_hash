@@ -17,13 +17,14 @@ def make_table(N, SEED=27):
 def retrieve_memory(T, V0, U=0.0, SEED=27, check_frequency=1):
     random.seed(SEED)
     # create array of random numbers here
-    conv_check_spacing = len(V0)*check_frequency 
+    #conv_check_spacing = len(V0)*check_frequency 
+    conv_check_spacing = 1
     V = V0.copy()
     return _retrieve_memory(T.shape[0], T, V.astype(int), U, conv_check_spacing)
     
 
 @cython.cdivision(True)
-cdef _retrieve_memory(CTYPE_I N, CTYPE_W[:,:] T, CTYPE_S[:] V, CTYPE_A U, CTYPE_int conv_check_spacing):
+cdef _retrieve_memory(CTYPE_I N, CTYPE_W[:,:] T, CTYPE_S[:] V, CTYPE_A U, CTYPE_int conv_check_spacing, CTYPE_int K=0):
     cdef CTYPE_I i, j, k
     cdef CTYPE_int[:] random_table
     random_table = make_table(N)
@@ -35,12 +36,12 @@ cdef _retrieve_memory(CTYPE_I N, CTYPE_W[:,:] T, CTYPE_S[:] V, CTYPE_A U, CTYPE_
             k += 1
             if k >= random_table.shape[0]:
                 print("Re-making table, k=",k)
-                _retrieve_memory(N, T, V, U, conv_check_spacing)
+                _retrieve_memory(N, T, V, U, conv_check_spacing, k)
                 # reprovision table and reset correct running context
     
-    with open(str(N)+"_k.txt", "a+") as file_object:
-        file_object.write(str(k) + "\n")
-    return V
+    #with open(str(N)+"_k.txt", "a+") as file_object:
+    #    file_object.write(str(k) + "\n")
+    return V, k+K
 
 
 cdef _check_threshold(CTYPE_A membrane_potential, CTYPE_A U):
