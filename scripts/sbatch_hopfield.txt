@@ -1,0 +1,21 @@
+ #!/bin/bash
+
+ # env setting (can be done only once)
+ export root=/fs/clip-realspeech/projects/assoc_mem
+ export mfcc=/fs/clip-realspeech/projects/assoc_mem/vectors.txt
+
+ # params to be changed
+ export method=amits
+ export test=errors
+ export p=0.1
+ export N=100
+ export U=0
+ export g=100 
+
+
+ # program launch
+ export resid="$method"_"$test"_"$p"p_"$N"N_"$U"U_"$g"g
+ export err=$root/err/"$resid".txt
+ export out=$root/out/"$resid".txt
+
+ sbatch --job-name=$resid --mem-per-cpu=4000 --ntasks=1 -p dpart --qos batch --time 1-00:00:00 -e $err -o $out --wrap "python $root/main.py -v $mfcc -m $method -t $test -p $p -n $N -u $U -g $g"

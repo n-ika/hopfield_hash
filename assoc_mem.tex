@@ -1,0 +1,226 @@
+\documentclass{article}
+
+
+\usepackage{PRIMEarxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}
+\usepackage{fancyhdr}       % header
+\usepackage{graphicx}       % graphics
+\graphicspath{{media/}}     % organize your images and other figures under media/ folder
+
+%Header
+\pagestyle{fancy}
+\thispagestyle{empty}
+\rhead{ \textit{ }} 
+
+% Update your Headers here
+\fancyhead[LO]{Running Title for Header}
+% \fancyhead[RE]{Firstauthor and Secondauthor} % Firstauthor et al. if more than 2 - must use \documentclass[twoside]{article}
+
+
+
+  
+%% Title
+\title{Simulation of associative memory
+%%%% Cite as
+%%%% Update your official citation here when published 
+}
+
+% FIX TITLE; not precise enough, fix at the end
+
+\author{
+  Nika Jurov \\
+%   Department of Linguistics \\
+%   UMD \\
+  \texttt{njurov@umd.edu} \\
+   \And
+  Thomas Schatz \\
+%   Affiliation \\
+%   Univ \\
+%   City\\
+  \texttt{tschatz@umd.edu} \\
+
+}
+
+
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+TODO
+\end{abstract}
+
+
+% keywords can be removed
+\keywords{First keyword \and Second keyword \and More}
+
+\section{Introduction}
+% introduce diff subj, arrive to paradox/question not solved, propose solution
+
+% 1st pr.: surprising fact of J experiment, babies dont speak yet but show familiarity
+
+% maybe add pr here: it is not the only case
+
+% 2e pr.: unexplained fact, how they do it
+% explanation of other papers what they propose 
+% there are no other models, emphasize this
+
+% 3rd pr.: we will explain in this way
+% give our results
+% contribution - model of J experiment; real scale
+% maybe separate in 2 paragraphs if it makes sense
+
+% 4th pr.: impact, why is it important
+% not specific to language or species
+% if often used to say it is specific to humans and lang acquisition, we can contradict it
+
+% 5th pr.: results show we must at least question previous explanations
+
+% also:
+% verify if 1st modelisation of Jusczyk
+
+% assoc mem more a subject of comp neuroscience
+
+Infants at around 8-9 months old retain sound memories of words that occur frequently even before speaking. \cite{jusczyk1997infants} This familiarity effect is shown for words out of context. This means that the recognition of sound of frequent has been observed in infants, whether they know the word's semantics or not.
+
+How the infants memorize the sounds of words before knowing them is not yet fully explained. Other work has proposed...
+However, no work until now has modeled the process \cite{jusczyk1997infants} has proposed.
+
+We propose a modeling study using an adapted recurrent Hopfield network that will serve as an approximation of associative memory. We show that our model, given the same amount of input as infants, shows familiarity effect [RESULTS???]. The novelty of this research is that we are using a memory model with real input that can scale to real human behavior observed in prior research.
+
+It is not possible to rule out that what we observe in human infants is an effect of episodic memory and is not specific to language acquisition per se. The associative memory (or episodic memory) is not specific to humans, nor to language acquisition. Animals have been shown to also have episodic memory and retain their memorized items over time.
+
+Given our results, we must at least question previous explanations of specific language acquisition mechanisms. What we show here could be an auditory memory effect seen over species, that is not particular to acquiring human language.
+
+\section{Overview}
+
+Our modeling study is using a representation of associative or episodic memory. Hippocampus is responsible for episodic memory. \cite{rolls} It is built of association networks and is sometimes called associative memory in computational neuroscience literature CITE. Hopfield network has frequently been used as an approximation of it because of its associative properties.
+
+We adapt Hopfield network by using it with sparse input. Sparse input is an input with very few active vector values. Sparse vectors are computationally extremely memory low cost. In addition, hippocampus has been shown to have sparse neural activity e.g. \cite{karlsson2008network, guzman2016synaptic}.
+
+The model acts as a representation of the mechanism used by infants during the word familiarity experiment. It receives as input real speech in the same amount the infants did. The output of the model is a state which it arrives to given the input and will be judged (by our test) as a judgment of familiarity of the given item.
+
+We evaluate our model on a precision and recall test. We use this test as a modeling representation of infants judging whether they are familiar with the word presented to them or not. This test measures how accurately overall the items are remembered and misremembered, i.e. wrongly stated as known, when they are in fact unknown.
+
+Our approach is as follows: first, we explain the memory effect in infants we are modeling. Second, we explain our methods and present the model. Third, we explain how we evaluate the model. Four, we introduce our cognitive hypothesis. Five, we present our results.
+
+\section{Memory for words}
+
+It has been shown that infants have associative memory of speech \cite{jusczyk1997infants}. 8-9 month old infants were read 3 different stories (30 minutes in total) prerecorded by 5 speakers over a period of 2 weeks (10 times in total). They were then tested with a head turn preference procedure with a list of 12 most frequent words from the stories and 12 words that did not occur in the stories, but are equally frequent words in English in general and are phonetically balanced. There were 6 such lists for frequent and foil words (72 words in total, 36 of each, randomly assigned twice to 3 lists). For each list, the testing voice belonged to one of the 5 talkers who read the stories and was also used for the practice trials that preceded the test. Infants showed familiarity preference to frequent words from the stories.
+
+
+\section{Hopfield network model}
+
+
+Hopfield network \cite{hopfield1982neural} is a recurrent artificial neural network with distinct units (neurons) that are inter-connected. These connections are stored in a $N \times N$ dimensional synaptic weight matrix $T$, where each cell $T_{ij}$ represents a connection between the neurons $i$ and $j$. At each time step, the network is represented by a state vector $V$ with $N$ dimensions.
+
+Synaptic weights $T_{ij}$ are learned via Hebb's rule, where two neurons that are both active are strengthened and weakened if not: $T_{ij} = \Sigma_s (2V_i^s-1)(2V_j^s-1)$, where $T_{ii}=0$. 
+
+Each neuron of $N$ dimensional vector $V$ (representing current network's state) has two possible states ($V_i$ is the i-th neuron's value): it is either on ($V_i=1$) or off ($V_i=0$). The unit is on if the neuron's state is higher than some threshold $U$: the state is determined by summing together all neuron's connections multiplied with the current neuron's state ($\Sigma_{i \neq j} T_{ij} V_i > U$).
+
+The network is trained with vectors that each represent an item to be memorized. Once the network is trained, it no longer changes. Given an input $V'$ it will then decide whether this input is known or not based on its trained synaptic weight matrix. This is achieved by establishing the state of the network change after the input was presented. If the network converges to an attraction point of the memorized item, it has successfully shown familiarity and/or recognition. If it has converged to another (or a really different) attraction point or to a null attraction point, it means it has made a mistake (another attractor) or it does not know the given item (null attractor).
+
+\subsection{Sparse input}
+
+Hopfield network proposed by Hopfield \cite{hopfield1982neural} can successfully store an amount of items that have a size (in total) of about 15\% of the number of the neurons ($0.15*N$). One way to increase that is by using sparse inputs, where only a small amount of neurons are active for each input (i.e. 10\% of units are 1, the rest are 0). \cite{amit1987information}
+
+As has been shown that there is sparse neural activity in hippocampus, e.g. \cite{karlsson2008network, guzman2016synaptic}. We want to represent this by using sparse inputs of real speech. To achieve this, we will hash real speech vectors. That is, each speech vector will be represented by a sparse vector, acting as a hash.
+
+Another big benefit of sparse inputs is the fact that they require less memory to be stored (that is, the majority of input vector is 0, i.e. off, while only a small percentage is active, i.e. 1 or on). This requires less storage. 
+
+\subsection{Hashing Real Speech}
+
+As speech vectors, usually used for computational uses, are digitally sampled and then computationally transformed, they are not sparse. We thus perform an additional transformation of speech vectors, where we hash them.
+
+Hashing is a procedure which enables to 
+
+FIXME
+
+\subsection{Network Adaptation For Sparse Input}
+
+Sparse inputs however do not work very well with the classic Hopfield network \cite{amit1987information} and prior work has shown how to mitigate this by adapting the synaptic weights and/or the threshold.
+
+Amit et al. \cite{amit1987information} have adapted synaptic weights during learning as $T_{ij} = \frac{1}{N}\Sigma_s (V_i - a)(V_j - a)$. Here, $a$ is the mean neuron activity and is $-1\leq a \leq 1$. However, having sparse input requires the majority of neurons' states to be 0. Therefore, here the neuron's state is $0 \leq V_i \leq 1$. To account for this, our weight matrix is built as $\frac{1}{N} \Sigma_s (V_i - p)(V_j - p)$. $p$ is the sparsity probability and as such will always be $0\leq p \leq 1$.
+
+Additionally, as \cite{amit1987information} we also use a uniform inhibition of the synaptic weights network $T-\frac{g}{N}$ after the network has been trained. Moreover, there is an adaptation of the threshold $U$ in that it becomes $U+g(\frac{0.5}{N}-p)$, where $g$ is a free parameter and $N$ is the number of neurons. The full derivation of this can be found in \cite{amit1987information}.
+
+Tsodyks and Feigel'man \cite{tsodyks1988enhanced} have adapted the activation threshold with $U+N*p$, where $p$ equals the sparsity probability and $N$ is the number of neurons.
+
+\section{Model evaluation}
+
+We need to evaluate the model based on familiarity effect. However, this is not straightforward as measures of success are many. When an item is presented to the network, the network will start with that and then converge to an attractor. If the item is known, even if it is slightly corrupted, we should arrive at the attractor that was formed when learning that item. If the item is not known, we should not arrive to any of the attractors representing learned items, but to a null state. This null state should be the default of any unknown item.
+
+But even for learned items, it is not entirely clear how to evaluate their familiarity. More precisely, there are many possible attractors and we need to decide up until what percentage of errors in the retrieved item do we judge that item familiar? In addition, as all our inputs are sparse, this needs to be taken into consideration.
+
+We decided to use precision and recall method (FIXME???).
+
+\section{Cognitive hypothesis}
+
+\section{Results}
+
+\section{Conclusion}
+
+%% add section to explain all methods, announces organization of subsections, present model, explain what is a success of the model
+% motivate utilisation of Hopfield network
+% search in Comp Cog Models where and why Hopf is used, also search in Rolls - motivate 
+% introduce cognitive hypothesis
+% Section: Approach
+% have figures showing control experiments
+% 
+
+
+
+% \section{Hypotheses Of Adapted Hopfield Network}
+
+% % fix some parameters except 1 parameter of interest (n,N,p), find a function that determines U and g - that are best for given parameter of interest
+% % analyssi of dynamical system (analytically - find a function tht expresses U,g,...)
+
+% Given Amit et al. and Tsodyks and Feigel'man proposal of changes to the network and Jusczyk \& Hohne's experiment on infants, we form the following hypotheses about changing the network:
+
+% \begin{enumerate}
+%     \item \textbf{The parameter determining the size of the network $N$}:
+%     We want our model to scale to human memory needs. This means we want to use a very large $N$, where we can store a large number of natural stimuli (actual speech), each represented by a vector of size $N$.
+    
+%     For this, we first need to test whether the network works with smaller $N$ and check its behavior in relation to other parameters. We plan to gradually increase $N$ until it is so large that the computation is too slow. Time to train and test the network is an important parameter that depends on $N$ - if time exceeds some reasonable amount (to be defined), we cannot compare this model to real humans that compute familiarity in extremely short amounts of time.
+    
+%     \item \textbf{The number of memories $n$ stored in the network}:
+%     Since each of three stories used by \cite{jusczyk1997infants} contained several hundred words and was read to 8-months old infants, who may or may not already have familiarized many other sounds, we need our $n$ to be as large as possible. We also do not know how each word is parsed - do infants memorize words as adults would parse them or do they parse sounds differently but still show familiarity? In the latter case, if parsed units are smaller than words, there are more of them. For all of this, $n$ needs to be big and account for more than $0.15*N\%$
+    
+%     To test how much stored memories our network can take, we plan on increasing $n$ from a single memory to many of them. We plan to gradually increase the number of memories to see how the network behaves. Basically, the desirable result is that the network behaves similarly with a small amount of memories as with large amount of memories. If this is true for $n<l$, where $l$ will be found empirically as the maximum $n$ before the network breaks because $n$ is too large, then we can empirically determine the amount of memories stored, given the other parameters, for which the networks performs properly.
+    
+    
+%     \item \textbf{The sparsity level assigned by the probability $p$ that a neuron's state is active}:
+%     Our inputs will be sparse hashes and the sparsity degree might have an influence on network behaviour. \cite{amit1987information} state that the number of memories $n$ stored in the network goes up if we have sparse inputs. Therefore, we plan to check how the network behaves when the input is not sparse ($p=0.5$ as in \cite{hopfield1982neural}, when it is slightly sparse ($p=0.1$) or very sparse ($p=0.01$). 
+    
+%     The desirable input will be very sparse ($p=0.01$). We expect that the smaller the parameter $p$, the larger $n$ number of memories we can successfully store in the network.
+    
+%     \item \textbf{The threshold determining the neuron's activation $U$}:
+    
+%     The threshold $U$ proposed by \cite{hopfield1982neural} is 0 by default. As states in \cite{hopfield1982neural}, $U=0$ acts as a forced categorizer and the network rarely converges to the null attractor (state with all 0). For us, having a null attractor being easily reached when the item is not known is desirable. For this, Hopfield  \cite{hopfield1982neural} proposes to elevate $U$.
+%     In addition, when having biased input as in \cite{amit1987information}, $U$ is adapted. 
+    
+%     For this, we plan to start with $U=0$ and then slightly elevate it and test it. We want the network to know when an item is not known and reach the null attractor instead of converging to false memories. This kind of test will give us information on how to best choose $U$.
+    
+%     \item \textbf{The parameter $g$ used by Amit et al. that expresses the stiffness of constraint, that forces the network's changes are mostly around the states with the preferred mean activity \cite{amit1987information}}:
+    
+%     $g$ is used to modify the threshold and the network (uniform inhibition). It is found that large $g$ returns the network to classical Hopfield network. We muct therefore find $g$ either analytically or empirically to have the functioning of the network we desire.
+    
+%     We will therefore test several $g$ values that, together with the other parameters,  will give the behavior of a large memory network successfully storing many memories.
+    
+% \end{enumerate}
+
+%Bibliography
+\bibliographystyle{unsrt}  
+\bibliography{references}  
+
+
+\end{document}
