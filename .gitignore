@@ -3,3 +3,4 @@ waveforms/
 test_wavs/
 output/
 *.tex
+.DS_Store 
