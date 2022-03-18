@@ -2,4 +2,4 @@ wavs/
 waveforms/
 test_wavs/
 output/
-
+*.tex
