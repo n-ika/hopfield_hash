@@ -22,7 +22,7 @@ N_list=[100, 200, 500]
 s_list=[27]
 p_list=[0.05, 0.1, 0.2]
 n_list=[16, 32, 64, 128, 256, 512]
-d_list=[0.01, 0.1, 0.5, 1]
+d_list=[0.01, 0.05, 0.1, 0.5, 1]
 U_list=[0, 3, 3.1, 3.9, 4.1, 4.9, 4, 5, 16, 32, 64, 128]
 g_list=[0, 1, 2, 4, 16, 32, 64, 128, 256, 512, 1024, 8192]
 
@@ -37,11 +37,9 @@ for N in N_list:
                 for d in d_list:
                     for U in U_list:
                         for g in g_list:
-                            csv = "_".join([test, method, "".join([str(p),"p"]), "".join([str(N),"N"]), "".join([str(n),"n"]), "".join([str(U),"U"]), "".join([str(g),"g"]), "".join([str(d),"d"]), "".join([str(s),"s"])])+".csv"
+                            csv = "_".join([test, method, "".join([str(p),"p"]), "".join([str(N),"N"]), "".join([str(n),"n"]), "".join([str(float(U)),"U"]), "".join([str(g),"g"]), "".join([str(float(d)),"d"]), "".join([str(s),"s"])])+".csv"
                             if not os.path.exists(dir + "/" + csv):
-                                # params = {"N": N, "s": s, "p": p, "n": n, "d": d, "U": U, "g": g}
-                                # todo[num] = params
-                                # num += 1
+                                print(dir + "/" + csv)
                                 todo["N"].append(N)
                                 todo["s"].append(s)
                                 todo["p"].append(p)
@@ -51,12 +49,5 @@ for N in N_list:
                                 todo["g"].append(g)
 
 fin = pd.DataFrame(todo, columns=["N", "s", "p", "n", "d", "U", "g"])
-
+fin = fin.drop_duplicates()
 fin.to_csv(root_dir+"/fix_params.csv")
-
-
-
-
-
-    
-

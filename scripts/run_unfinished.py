@@ -4,6 +4,7 @@ from test_sys import *
 import argparse
 import timeit
 import pandas as pd
+import os
 
 method = "amit"
 test = "errors"
@@ -18,16 +19,22 @@ df = df_full.loc[int(START):int(STOP)]
 
 for row in df.itertuples():
     start = timeit.default_timer()
-
-    results_artif = test_memory(METHOD = method, TEST = test, mfccs_vectors=None, U = row.U, N = row.N, n = row.n, g = row.g, p = row.p, d = row.d, SEED = row.s)
-    results_artif["g"] = row.g
-    results_artif["U"] = row.U
-    results_artif["d"] = row.d
-    results_artif["n"] = row.n
-    results_artif["seed"] = row.s
+    
     specs = "_".join([test, method, str(row.p)+"p", str(row.N)+"N", str(row.n)+"n", str(row.U)+"U", str(row.g)+"g", str(row.d)+"d", str(row.s)+"s"])
-    results_artif.to_csv('./output/results/' + str(row.N) + "N/" + specs + '.csv')
 
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
-    print('DONE')
+    filepath = './output/results/' + str(row.N) + "N/" + specs + '.csv'
+    
+    if not os.path.isfile(filepath):
+
+        results_artif = test_memory(METHOD = method, TEST = test, mfccs_vectors=None, U = row.U, N = row.N, n = row.n, g = row.g, p = row.p, d = row.d, SEED = row.s)
+        results_artif["g"] = row.g
+        results_artif["U"] = row.U
+        results_artif["d"] = row.d
+        results_artif["n"] = row.n
+        results_artif["seed"] = row.s
+    
+        results_artif.to_csv(filepath)
+
+        stop = timeit.default_timer()
+        print('Time: ', stop - start)
+        print(specs, '\n DONE')
