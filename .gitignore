@@ -4,3 +4,4 @@ test_wavs/
 output/
 *.tex
 .DS_Store 
+node_modules/
