@@ -1,7 +1,7 @@
 wavs/
 waveforms/
 test_wavs/
-output/
+output/*/
 *.tex
 .DS_Store 
 node_modules/
