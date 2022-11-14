@@ -5,3 +5,12 @@ output/*/
 *.tex
 .DS_Store 
 node_modules/
+scripts/test_funcs
+scripts_k/test_funcs
+scripts_sparse/test_funcs
+*.c
+*.so
+scripts/__pycache__
+scripts_k/__pycache__
+scripts_sparse/__pycache__
+
